@@ -1,0 +1,6 @@
+Flask
+pandas
+reportlab
+requests
+Pillow
+WeasyPrint
