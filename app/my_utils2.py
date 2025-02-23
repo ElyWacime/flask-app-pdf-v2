@@ -2,17 +2,20 @@ from weasyprint import HTML
 import os
 from datetime import datetime
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Informations d'authentification
-KOBO_USERNAME = "el_ayeb_ahmed"
-KOBO_PASSWORD = "NouvelArrivant*2024"
+KOBO_USERNAME = os.getenv("KOBO_USERNAME")
+KOBO_PASSWORD = os.getenv("KOBO_PASSWORD")
 KOBO_AUTH = (KOBO_USERNAME, KOBO_PASSWORD)
 
 # SharePoint configuration
-SHAREPOINT_SITE_URL = "https://yourcompany.sharepoint.com/sites/yoursite"
-SHAREPOINT_FOLDER_URL = f"{SHAREPOINT_SITE_URL}/Shared Documents/yourfolder"
-SHAREPOINT_USERNAME = "your_sharepoint_username"
-SHAREPOINT_PASSWORD = "your_sharepoint_password"
+SHAREPOINT_SITE_URL = os.getenv("SHAREPOINT_SITE_URL")
+SHAREPOINT_FOLDER_URL = f"{SHAREPOINT_SITE_URL}{os.getenv('SHAREPOINT_FOLDER_URL')}"
+SHAREPOINT_USERNAME = os.getenv("SHAREPOINT_USERNAME")
+SHAREPOINT_PASSWORD = os.getenv("SHAREPOINT_PASSWORD")
 
 def create_pdf_from_data(data):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,6 +49,7 @@ def create_pdf_from_data(data):
     }
     .value {
         color: #333;
+        padding-left: 20px;
     }
     .section {
         margin-bottom: 20px;
@@ -368,7 +372,7 @@ def process_generic_data(key, value):
 
     else:
         label = key
-    return f'<p><span class="label">{label}:</span> <span class="value">{value}</span></p>' \
+    return f'<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
         if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
             and (not (key.startswith("site_group/s") and len(key) == 14)) \
             and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
