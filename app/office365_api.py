@@ -2,7 +2,7 @@ from urllib import response
 from dotenv import load_dotenv
 from office365.sharepoint.client_context import ClientContext
 from office365.runtime.auth.client_credential import ClientCredential
-from office365.runtime.auth.user_credential import UserCredential # i need a root account to use userCredential
+from office365.runtime.auth.user_credential import UserCredential # i need an admin account to use userCredential
 from office365.sharepoint.files.file import File
 import datetime
 import os

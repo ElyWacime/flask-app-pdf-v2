@@ -221,7 +221,92 @@ def process_json_data(data, images_dir):
 
 
 
+def process_generic_data(key, value):
+        # Generate HTML for generic data
+        label = ""
+        section_name = ""
 
+        if key.startswith("site_group"):
+            section_name = "Site Group"
+            if key == "site_group/adresse":
+                label = "Adresse du site"
+            elif key == "site_group/contr_reglem":
+                label = "Contraintes d'intervention (horaires, saisons) :"
+            elif key == "site_group/is_PL_acces":
+                label = "Accès PL, vehicule de chantier :"
+            elif key == "site_group/contr_reglem_001":
+                label = "Contraintes: lignes HTA existante, réseau:"
+            elif key.startswith('site_group/c') and len(key) == 14:
+                label = "commentaire"
+
+        elif key.startswith("batiment_group"):
+            section_name = "Batiment Group"
+            if key == "batiment_group/info_bati":
+                label = "Information sur les batiments: Age , plans/DOE à disposition/"
+            elif key.startswith("batiment_group/c") and len(key) == 18:
+                label = "commentaire"
+            elif key == "batiment_group/d_pign_lpan":
+                label = "Dimensions pignons et longpan:"
+            elif key == "batiment_group/hbp_hf":
+                label = "hauteur baas de pente, hauteur faitage (mesure):"
+            elif key == "batiment_group/t_secu_EPI":
+                label = "type de securisation (EPI) echaufaudage, garde-sorps etc"
+            elif key == "batiment_group/T_charpente":
+                label = "Type de charpente"
+            elif key == "batiment_group/P_charpente":
+                label = "Type de pannes, dimensions des pannes et dimensions(s) des entraxes (important)"
+            elif key == "batiment_group/M_couver":
+                label = "materiau, isolation de la couverture"
+            elif key == "batiment_group/R_couver":
+                label = "reference du materiau de couverture(marque, modèle)"
+            elif key == "batiment_group/d_couver":
+                label = "dimension du materiau de couverture, si applicable - important"
+            elif key == "batiment_group/c_inter":
+                label = "contraintes accès interieur du bâti durant le chantier:"
+            elif key == "batiment_group/renov_gener":
+                label = "Renovation: Observation generales: corrosion, humidite, etancheite etc.."
+            elif key == "batiment_group/renov_attendus":
+                label = "preciser les travaux attendus pour la renovation (desamintage, desenfumage, translucide etc"
+
+        elif key.startswith("electricite_group"):
+            section_name = "Electricite Group"
+            if key == "electricite_group/t_ombra":
+                label = "masque proche (ombreage): position et dimension (approx.) des obstacles"
+            elif key == "electricite_group/s91":
+                label = "voulez vous ajoutez d'autres photo?"
+            elif key == "electricite_group/racc_indi":
+                label = "ACI / raccordement indirect ?"
+            elif key.startswith("electricite_group/c") and (len(key) == 22 or len(key) == 21):
+                label = "commentaire"
+            elif key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21):
+                label = "voulez vous ajoutez d'autres photo?"
+            elif key == "electricite_group/pass_dc":
+                label = "passage DC, descentes de chemin de cables"
+            elif key == "electricite_group/pass_AC":
+                label = "passage des câbles AC jusqu'au TGBT (ACI) ou PDL à creer (VT), nature des revêtement à traverse"
+            elif key == "electricite_group/cat_compteur":
+                label = "Categorie du compteur existant (C1 à C5), puissance de raccordement actuelle"
+            elif key == "electricite_group/dim_arr_elec":
+                label = "Dimensionnement de l'arrivee electricite existante (materiau, section)"
+            elif key == "electricite_group/s131":
+                label = "passage DC, descentes de chemin de cables"
+
+        elif key.startswith("info_compl"):
+            section_name = "Informations Complémentaires"
+            if key.startswith("info_compl/c") and len(key) == 15:
+                label = "commentaire"
+            elif key.startswith("info_compl/s") and len(key) == 15:
+                label = "voulez vous ajoutez d'autres photo?"
+
+        else:
+            label = key
+
+        section_html = f'<h2>{section_name}</h2>' if section_name else ""
+        return f'{section_html}<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
+            if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
+                and (not (key.startswith("site_group/s") and len(key) == 14)) \
+                and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
+                and (not (key.startswith("info_compl/s") and len(key) == 15))) else ""
 
 #####################=======================#################################
 
@@ -277,84 +362,84 @@ def process_geolocation(geolocation):
     # Generate HTML for geolocation
     return f'<p>Geolocation: {geolocation}</p>'
 
-def process_generic_data(key, value):
-    # Generate HTML for generic data
-    label = ""
-    if key == "site_group/adresse":
-        label = "Adresse du site"
-    elif key == "site_group/contr_reglem":
-        label = "Contraintes d'intervention (horaires, saisons) :"
-    elif key == "site_group/is_PL_acces":
-        label = "Accès PL, vehicule de chantier :"
-    elif key == "site_group/contr_reglem_001":
-        label = "Contraintes: lignes HTA existante, réseau:"
-    elif (key.startswith('site_group/c') and len(key) == 14):
-        label = "commentaire"
+# def process_generic_data(key, value):
+#     # Generate HTML for generic data
+#     label = ""
+#     if key == "site_group/adresse":
+#         label = "Adresse du site"
+#     elif key == "site_group/contr_reglem":
+#         label = "Contraintes d'intervention (horaires, saisons) :"
+#     elif key == "site_group/is_PL_acces":
+#         label = "Accès PL, vehicule de chantier :"
+#     elif key == "site_group/contr_reglem_001":
+#         label = "Contraintes: lignes HTA existante, réseau:"
+#     elif (key.startswith('site_group/c') and len(key) == 14):
+#         label = "commentaire"
 
-    # for batiment group
-    elif (key == "batiment_group/info_bati"):
-        label = "Information sur les batiments: Age , plans/DOE à disposition/"
-    elif (key.startswith("batiment_group/c") and len(key) == 18):
-        label = "commentaire"
-    elif (key == "batiment_group/d_pign_lpan"):
-        label = "Dimensions pignons et longpan:"
-    elif (key == "batiment_group/hbp_hf"):
-        label = "hauteur baas de pente, hauteur faitage (mesure):"
-    elif (key == "batiment_group/t_secu_EPI"):
-        label = "type de securisation (EPI) echaufaudage, garde-sorps etc"
-    elif (key == "batiment_group/T_charpente"):
-        label = "Type de charpente"
-    elif (key == "batiment_group/P_charpente"):
-        label = "Type de pannes, dimensions des pannes et dimensions(s) des entraxes (important)"
-    elif (key == "batiment_group/M_couver"):
-        label = "materiau, isolation de la couverture"
-    elif (key == "batiment_group/R_couver"):
-        label = "reference du materiau de couverture(marque, modèle)"
-    elif (key == "batiment_group/d_couver"):
-        label = "dimension du materiau de couverture, si applicable - important"
-    elif (key == "batiment_group/c_inter"):
-        label = "contraintes accès interieur du bâti durant le chantier:"
-    elif (key == "batiment_group/renov_gener"):
-        label = "Renovation: Observation generales: corrosion, humidite, etancheite etc.."
-    elif (key == "batiment_group/renov_attendus"):
-        label = "preciser les travaux attendus pour la renovation (desamintage, desenfumage, translucide etc"
+#     # for batiment group
+#     elif (key == "batiment_group/info_bati"):
+#         label = "Information sur les batiments: Age , plans/DOE à disposition/"
+#     elif (key.startswith("batiment_group/c") and len(key) == 18):
+#         label = "commentaire"
+#     elif (key == "batiment_group/d_pign_lpan"):
+#         label = "Dimensions pignons et longpan:"
+#     elif (key == "batiment_group/hbp_hf"):
+#         label = "hauteur baas de pente, hauteur faitage (mesure):"
+#     elif (key == "batiment_group/t_secu_EPI"):
+#         label = "type de securisation (EPI) echaufaudage, garde-sorps etc"
+#     elif (key == "batiment_group/T_charpente"):
+#         label = "Type de charpente"
+#     elif (key == "batiment_group/P_charpente"):
+#         label = "Type de pannes, dimensions des pannes et dimensions(s) des entraxes (important)"
+#     elif (key == "batiment_group/M_couver"):
+#         label = "materiau, isolation de la couverture"
+#     elif (key == "batiment_group/R_couver"):
+#         label = "reference du materiau de couverture(marque, modèle)"
+#     elif (key == "batiment_group/d_couver"):
+#         label = "dimension du materiau de couverture, si applicable - important"
+#     elif (key == "batiment_group/c_inter"):
+#         label = "contraintes accès interieur du bâti durant le chantier:"
+#     elif (key == "batiment_group/renov_gener"):
+#         label = "Renovation: Observation generales: corrosion, humidite, etancheite etc.."
+#     elif (key == "batiment_group/renov_attendus"):
+#         label = "preciser les travaux attendus pour la renovation (desamintage, desenfumage, translucide etc"
   
-    # for electricite_group
-    elif (key == "electricite_group/t_ombra"):
-        label = "masque proche (ombreage): position et dimension (approx.) des obstacles"
-    elif (key == "electricite_group/s91"):
-        label = "voulez vous ajoutez d'autres photo?"
-    elif (key == "electricite_group/racc_indi"):
-        label = "ACI / raccordement indirect ?"
-    elif (key.startswith("electricite_group/c") and (len(key) == 22 or len(key) == 21)):
-        label = "commentaire"
-    elif (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21)):
-        label = "voulez vous ajoutez d'autres photo?"
+#     # for electricite_group
+#     elif (key == "electricite_group/t_ombra"):
+#         label = "masque proche (ombreage): position et dimension (approx.) des obstacles"
+#     elif (key == "electricite_group/s91"):
+#         label = "voulez vous ajoutez d'autres photo?"
+#     elif (key == "electricite_group/racc_indi"):
+#         label = "ACI / raccordement indirect ?"
+#     elif (key.startswith("electricite_group/c") and (len(key) == 22 or len(key) == 21)):
+#         label = "commentaire"
+#     elif (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21)):
+#         label = "voulez vous ajoutez d'autres photo?"
 
-    elif (key == "electricite_group/pass_dc"):
-        label = "passage DC, descentes de chemin de cables"
-
-
-    elif (key == "electricite_group/pass_AC"):
-        label = "passage des câbles AC jusqu'au TGBT (ACI) ou PDL à creer (VT), nature des revêtement à traverse"
-    elif (key == "electricite_group/cat_compteur"):
-        label = "Categorie du compteur existant (C1 à C5), puissance de raccordement actuelle"
-    elif (key == "electricite_group/dim_arr_elec"):
-        label = "Dimensionnement de l'arrivee electricite existante (materiau, section)"
-    elif (key == "electricite_group/s131"):
-        label = "passage DC, descentes de chemin de cables"
+#     elif (key == "electricite_group/pass_dc"):
+#         label = "passage DC, descentes de chemin de cables"
 
 
-# for Informations complémentaires
-    elif (key.startswith("info_compl/c") and len(key) == 15):
-        label = "commentaire"
-    elif (key.startswith("info_compl/s") and len(key) == 15):
-        label = "voulez vous ajoutez d'autres photo?"
+#     elif (key == "electricite_group/pass_AC"):
+#         label = "passage des câbles AC jusqu'au TGBT (ACI) ou PDL à creer (VT), nature des revêtement à traverse"
+#     elif (key == "electricite_group/cat_compteur"):
+#         label = "Categorie du compteur existant (C1 à C5), puissance de raccordement actuelle"
+#     elif (key == "electricite_group/dim_arr_elec"):
+#         label = "Dimensionnement de l'arrivee electricite existante (materiau, section)"
+#     elif (key == "electricite_group/s131"):
+#         label = "passage DC, descentes de chemin de cables"
 
-    else:
-        label = key
-    return f'<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
-        if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
-            and (not (key.startswith("site_group/s") and len(key) == 14)) \
-            and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
-            and (not (key.startswith("info_compl/s") and len(key) == 15))) else ""
+
+# # for Informations complémentaires
+#     elif (key.startswith("info_compl/c") and len(key) == 15):
+#         label = "commentaire"
+#     elif (key.startswith("info_compl/s") and len(key) == 15):
+#         label = "voulez vous ajoutez d'autres photo?"
+
+#     else:
+#         label = key
+#     return f'<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
+#         if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
+#             and (not (key.startswith("site_group/s") and len(key) == 14)) \
+#             and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
+#             and (not (key.startswith("info_compl/s") and len(key) == 15))) else ""
