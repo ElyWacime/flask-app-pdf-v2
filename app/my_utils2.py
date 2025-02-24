@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import requests
 from dotenv import load_dotenv
+from app.office365_api import SharePoint
 
 load_dotenv()
 
@@ -10,12 +11,6 @@ load_dotenv()
 KOBO_USERNAME = os.getenv("KOBO_USERNAME")
 KOBO_PASSWORD = os.getenv("KOBO_PASSWORD")
 KOBO_AUTH = (KOBO_USERNAME, KOBO_PASSWORD)
-
-# SharePoint configuration
-SHAREPOINT_SITE_URL = os.getenv("SHAREPOINT_SITE_URL")
-SHAREPOINT_FOLDER_URL = f"{SHAREPOINT_SITE_URL}{os.getenv('SHAREPOINT_FOLDER_URL')}"
-SHAREPOINT_USERNAME = os.getenv("SHAREPOINT_USERNAME")
-SHAREPOINT_PASSWORD = os.getenv("SHAREPOINT_PASSWORD")
 
 def create_pdf_from_data(data):
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -137,6 +132,7 @@ def create_pdf_from_data(data):
     except Exception as e:
         print(f"Error uploading PDF to SharePoint: {e}")
 
+
     return pdf_file_path
 
 def upload_to_sharepoint(file_path):
@@ -144,24 +140,9 @@ def upload_to_sharepoint(file_path):
     with open(file_path, 'rb') as file:
         file_content = file.read()
 
-    headers = {
-        "accept": "application/json;odata=verbose",
-        "content-type": "application/json;odata=verbose"
-    }
-
-    auth = (SHAREPOINT_USERNAME, SHAREPOINT_PASSWORD)
-    upload_url = f"{SHAREPOINT_FOLDER_URL}/{file_name}"
-
-    response = requests.post(upload_url, headers=headers, data=file_content, auth=auth)
-    if response.status_code == 201:
-        print(f"File uploaded to SharePoint: {upload_url}")
-    else:
-        print(f"Failed to upload file to SharePoint: {response.status_code}, {response.text}")
-
-
-
-
-
+    sharepoint = SharePoint()
+    response = sharepoint.upload_file(file_name, '', file_content)
+    print(f"File uploaded to SharePoint: {response.serverRelativeUrl}")
 
 # =====================================changed ====================================
 def process_json_data(data, images_dir):
