@@ -152,89 +152,123 @@ def process_generic_data(key, value):
     # Generate HTML for generic data
     label = ""
     section_name = ""
+    anchor_name = ""
 
     if key.startswith("site_group"):
         section_name = "Site Group"
+        anchor_name = "site_group"
         if key == "site_group/adresse":
             label = "1.1 Adresse du site"
+            anchor_name = "site_group/adresse"
         elif key == "site_group/contr_reglem":
             label = "1.2 Contraintes d'intervention (horaires, saisons) :"
+            anchor_name = "site_group/contr_reglem"
         elif key == "site_group/is_PL_acces":
             label = "1.3 Accès PL, vehicule de chantier :"
+            anchor_name = "site_group/is_PL_acces"
         elif key == "site_group/contr_reglem_001":
             label = "1.4 Contraintes: lignes HTA existante, réseau:"
+            anchor_name = "site_group/contr_reglem_001"
         elif key.startswith('site_group/c') and len(key) == 14:
             label = "1.6 commentaire"
+            anchor_name = "site_group/commentaire"
 
     elif key.startswith("batiment_group"):
         section_name = "Batiment Group"
+        anchor_name = "batiment_group"
         if key == "batiment_group/info_bati":
             label = "2.1 Information sur les bâtiments: Âge, plans/DOE à disposition"
+            anchor_name = "batiment_group/info_bati"
         elif key.startswith("batiment_group/c") and len(key) == 18:
             label = "2.3 Commentaire sur les vues pignon et long pan"
+            anchor_name = "batiment_group/commentaire_pignon"
         elif key == "batiment_group/d_pign_lpan":
             label = "2.4 Dimensions pignons et long pan"
+            anchor_name = "batiment_group/dimensions_pignons"
         elif key == "batiment_group/hbp_hf":
             label = "2.5 Hauteur bas de pente, hauteur faitage (mesure)"
+            anchor_name = "batiment_group/hauteur_pente"
         elif key == "batiment_group/t_secu_EPI":
             label = "2.6 Type de sécurisation (EPI) échafaudage, garde-corps, etc."
+            anchor_name = "batiment_group/securisation"
         elif key == "batiment_group/T_charpente":
             label = "2.9 Type de charpente"
+            anchor_name = "batiment_group/type_charpente"
         elif key == "batiment_group/P_charpente":
             label = "2.10 Type de pannes, dimensions des pannes et dimensions(s) des entraxes"
+            anchor_name = "batiment_group/type_pannes"
         elif key == "batiment_group/M_couver":
             label = "2.13 Matériau, isolation de la couverture"
+            anchor_name = "batiment_group/materiau_couverture"
         elif key == "batiment_group/R_couver":
             label = "2.16 Référence du matériau de couverture (marque, modèle)"
+            anchor_name = "batiment_group/reference_couverture"
         elif key == "batiment_group/d_couver":
             label = "2.17 Dimension du matériau de couverture, si applicable - important"
+            anchor_name = "batiment_group/dimension_couverture"
         elif key == "batiment_group/c_inter":
             label = "2.19 Commentaire sur les intérieurs du bâtiment"
+            anchor_name = "batiment_group/commentaire_interieurs"
         elif key == "batiment_group/renov_gener":
             label = "2.21 Rénovation: Observations générales : corrosion, humidité, étanchéité, etc."
+            anchor_name = "batiment_group/renovation_observations"
         elif key == "batiment_group/renov_attendus":
             label = "2.22 Préciser les travaux attendus pour la rénovation (désamiantage, désenfumage, translucide, etc.)"
+            anchor_name = "batiment_group/travaux_renovation"
 
     elif key.startswith("electricite_group"):
         section_name = "Electricite Group"
+        anchor_name = "electricite_group"
         if key == "electricite_group/t_ombra":
             label = "3.1 Masque proche (ombrage): position et dimension (approx.) des obstacles"
+            anchor_name = "electricite_group/masque_proche"
         elif key == "electricite_group/s91":
             label = "3.2 Masque proche (ombrage): photo/vidéo de l'environnement proche"
+            anchor_name = "electricite_group/s91"
         elif key == "electricite_group/racc_indi":
             label = "3.10 ACI / raccordement indirect ?"
+            anchor_name = "electricite_group/raccordement_indirect"
         elif key.startswith("electricite_group/c") and (len(key) == 22 or len(key) == 21):
             label = "3.3 Commentaire sur le masque proche"
+            anchor_name = "electricite_group/commentaire_masque"
         elif key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21):
             label = "3.4 Masque proche (ombrage): vidéo de l'environnement proche"
+            anchor_name = "electricite_group/video_masque"
         elif key == "electricite_group/pass_dc":
             label = "3.5 Passage DC, descentes de chemin de câbles"
+            anchor_name = "electricite_group/passage_dc"
         elif key == "electricite_group/pass_AC":
             label = "3.9 Passage des câbles AC jusqu'au TGBT (ACI) ou PDL à créer (VT), nature des revêtements à traverser"
+            anchor_name = "electricite_group/passage_ac"
         elif key == "electricite_group/cat_compteur":
             label = "3.13 Catégorie du compteur existant (C1 à C5), puissance de raccordement actuelle"
+            anchor_name = "electricite_group/categorie_compteur"
         elif key == "electricite_group/dim_arr_elec":
             label = "3.14 Dimensionnement de l'arrivée électricité existante (matériau, section)"
+            anchor_name = "electricite_group/dimension_arrivee"
         elif key == "electricite_group/s131":
             label = "3.15 Transformateur existant (public, privé): photo"
+            anchor_name = "electricite_group/transformateur_photo"
 
     elif key.startswith("info_compl"):
         section_name = "Informations Complémentaires"
+        anchor_name = "info_compl"
         if key.startswith("info_compl/c") and len(key) == 15:
             label = "4.2 Commentaire sur le contrat d'électricité"
+            anchor_name = "info_compl/commentaire_contrat"
         elif key.startswith("info_compl/s") and len(key) == 15:
             label = "4.3 Facture électrique (pour le calcul des taxes)"
+            anchor_name = "info_compl/facture_electrique"
 
     else:
         label = key
 
-    section_html = f'<h2>{section_name}</h2>' if section_name else ""
+    section_html = f'<h2 id="{anchor_name}">{section_name}</h2>' if section_name else ""
     return f'{section_html}<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
         if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
             and (not (key.startswith("site_group/s") and len(key) == 14)) \
             and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
             and (not (key.startswith("info_compl/s") and len(key) == 15))) else ""
-
 
 def extract_image_urls(attachments):
     image_urls = {}
