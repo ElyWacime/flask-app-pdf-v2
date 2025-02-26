@@ -5,8 +5,11 @@ css_content = """
         background-color: #f9f9f9;
         color: #333;
     }
+    h2 {
+        color: #f7ed2f;
+    }
     h1 {
-        color: ##f5f516;
+        color: #f5f516;
         text-align: center;
         border-bottom: 2px solid #333;
         padding-bottom: 10px;
