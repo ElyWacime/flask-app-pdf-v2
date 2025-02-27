@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from app.office365_api import SharePoint
 from app.somaire import sommaire
 from app.css_content import css_content
+import urllib.parse
 
 load_dotenv()
 
@@ -13,7 +14,6 @@ load_dotenv()
 KOBO_USERNAME = os.getenv("KOBO_USERNAME")
 KOBO_PASSWORD = os.getenv("KOBO_PASSWORD")
 KOBO_AUTH = (KOBO_USERNAME, KOBO_PASSWORD)
-
 
 
 def create_pdf_from_data(data):
@@ -63,13 +63,12 @@ def create_pdf_from_data(data):
     return pdf_file_path
 
 def upload_to_sharepoint(file_path):
-    file_name = os.path.basename(file_path)
-    with open(file_path, 'rb') as file:
-        file_content = file.read()
-
+    folder_name = 'FOR TESTING PDF (TO DELETE LATER)'
+    encoded_folder_name = urllib.parse.quote(folder_name)
     sharepoint = SharePoint()
-    response = sharepoint.upload_file(file_name, '', file_content)
-    print(f"File uploaded to SharePoint: {response.serverRelativeUrl}")
+    sharepoint.upload_file_via_api(file_path, encoded_folder_name)
+    print(f"File uploaded to SharePoint: {file_path}")
+
 
 # =====================================changed ====================================
 def process_json_data(data, images_dir):
@@ -123,6 +122,7 @@ def process_json_data(data, images_dir):
             elif (key.startswith('electricite_group/i') and  key != "electricite_group/i91" and key != "electricite_group/i101" and key != "electricite_group/i111"and key != "electricite_group/i121"  and key != "electricite_group/i131" and len(key) == 22):
                 description = "additionnal image"
 
+
             # for information complaimentaire
             elif (key == "info_compl/i141"):
                 description = "Contrat d'electricite (si besoin, pour chaque PdL)"
@@ -135,7 +135,6 @@ def process_json_data(data, images_dir):
             elif (key.startswith('info_compl/i1') and  key != "info_compl/i141" and key != "info_compl/i151" and key != "info_compl/i161"and key != "info_compl/i171" and len(key) == 15):
                 description = "additionnal image"
 
-            
 
             # Add more conditions for other keys as needed
             html_content += f'<p><div class="description">{description}</div></p>'
@@ -146,9 +145,11 @@ def process_json_data(data, images_dir):
             html_content += process_generic_data(key, value)
     return html_content
 
-
+# Add a global set to keep track of displayed sections
+displayed_sections = set()
 
 def process_generic_data(key, value):
+    global displayed_sections
     # Generate HTML for generic data
     label = ""
     section_name = ""
@@ -263,12 +264,18 @@ def process_generic_data(key, value):
     else:
         label = key
 
-    section_html = f'<h2 id="{anchor_name}">{section_name}</h2>' if section_name else ""
-    return f'{section_html}<p><div class="label">{label}:</div> <div class="value">{value}</div></p><br>' \
+    # Check if the section name has already been displayed
+    section_html = ""
+    if section_name and section_name not in displayed_sections:
+        section_html = f'<h2 id="{anchor_name}">{section_name}</h2>'
+        displayed_sections.add(section_name)
+
+    return f'{section_html}<p><div class="label" id="{anchor_name}">{label}:</div> <div class="value">{value}</div></p><br>' \
         if (key != "_attachments" and key != "_geolocation" and (not (key.startswith("batiment_group/s") and len(key) == 18)) \
             and (not (key.startswith("site_group/s") and len(key) == 14)) \
             and (not (key.startswith("electricite_group/s") and (len(key) == 22 or len(key) == 21))) \
             and (not (key.startswith("info_compl/s") and len(key) == 15))) else ""
+
 
 def extract_image_urls(attachments):
     image_urls = {}
@@ -287,10 +294,11 @@ def process_image(image_urls, image_name, images_dir):
     normalized_image_name = image_name.replace(' ', '_')
     # Get the image URL from the extracted image URLs
     image_url = image_urls.get(normalized_image_name, "default_image_url")
-    print(f"Processing image: {image_name}, URL: {image_url}")  # Debugging print
+    print(f"Processing image: {normalized_image_name}, URL: {image_url}")  # Debugging print
 
     # Authenticate and fetch the image URL
     image_url = authenticate_and_get_image_url(image_url)
+    print("\n\n\n\n\n\n")
     print(f"Authenticated image URL: {image_url}")  # Debugging print
 
     # Download the image locally

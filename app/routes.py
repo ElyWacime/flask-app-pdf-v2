@@ -13,9 +13,6 @@ def generate_pdf():
         return jsonify({"error": "No data provided"}), 400
 
     try:
-        print("\n\n\n###################")
-        print(data)
-        print("###################\n\n\n")
         pdf_file_path = create_pdf_from_data(data)
         if not os.path.exists(pdf_file_path):
             return jsonify({"error": f"File not found: {pdf_file_path}"}), 500
