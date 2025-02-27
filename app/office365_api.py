@@ -5,12 +5,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # SharePoint configuration
+USERNAME = os.getenv('sharepoint_email')
+PASSWORD = os.getenv('sharepoint_password')
 SHAREPOINT_SITE = os.getenv('sharepoint_url_site')
 SHAREPOINT_SITE_NAME = os.getenv('sharepoint_site_name')
 SHAREPOINT_DOC = os.getenv('sharepoint_doc_library')
 CLIENT_ID = os.getenv('CLIENT_ID')
 TENANT_ID = os.getenv('TENANT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET_VALUE')
+
+# Debugging prints to verify environment variables
+print(f"CLIENT_ID: {CLIENT_ID}")
+print(f"TENANT_ID: {TENANT_ID}")
+print(f"CLIENT_SECRET: {CLIENT_SECRET}")
 
 class SharePoint:
 
@@ -49,13 +56,16 @@ class SharePoint:
             'grant_type': 'client_credentials',
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET,
-            'scope': f"{SHAREPOINT_SITE}/.default"
+            'scope': "https://enervivo.sharepoint.com/.default"
         }
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
+        print(f"Payload: {payload}")  # Debugging print
         response = requests.post(url, data=payload, headers=headers)
         if response.status_code != 200:
             print(f"Failed to get access token: {response.status_code}, {response.text}")
         response.raise_for_status()
-        return response.json().get('access_token')
+        access_token = response.json().get('access_token')
+        print(f"Access token: {access_token}")  # Debugging print
+        return access_token
