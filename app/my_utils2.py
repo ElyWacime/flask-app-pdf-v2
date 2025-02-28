@@ -63,11 +63,22 @@ def create_pdf_from_data(data):
     return pdf_file_path
 
 def upload_to_sharepoint(file_path):
-    folder_name = 'FOR TESTING PDF (TO DELETE LATER)'
-    encoded_folder_name = urllib.parse.quote(folder_name)
+    folder_name = 'AAA_FOR_TEST_TO_DELETE_LATER'
     sharepoint = SharePoint()
-    sharepoint.upload_file_via_api(file_path, encoded_folder_name)
+    
+    # Read the content of the file to upload
+    with open(file_path, 'rb') as file:
+        content = file.read()
+    
+    print(f"#############\n{content}\n###############")
+    
+    # Extract the file name from the file path
+    file_name = os.path.basename(file_path)
+    
+    # Upload the file to SharePoint
+    response = sharepoint.upload_file(file_name, folder_name, content)
     print(f"File uploaded to SharePoint: {file_path}")
+    return response
 
 
 # =====================================changed ====================================

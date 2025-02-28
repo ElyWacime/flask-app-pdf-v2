@@ -6,3 +6,4 @@ Pillow
 WeasyPrint
 python-dotenv
 Office365-REST-Python-Client
+django-environ
