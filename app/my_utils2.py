@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from app.office365_api import SharePoint
 from app.somaire import sommaire
 from app.css_content import css_content
-import urllib.parse
 
 load_dotenv()
 
@@ -59,18 +58,15 @@ def create_pdf_from_data(data):
     except Exception as e:
         print(f"Error uploading PDF to SharePoint: {e}")
 
-
     return pdf_file_path
 
 def upload_to_sharepoint(file_path):
-    folder_name = 'AAA_FOR_TEST_TO_DELETE_LATER'
+    folder_name = '09-Projets/AAA_FOR_TEST_TO_DELETE_LATER'
     sharepoint = SharePoint()
     
     # Read the content of the file to upload
     with open(file_path, 'rb') as file:
         content = file.read()
-    
-    print(f"#############\n{content}\n###############")
     
     # Extract the file name from the file path
     file_name = os.path.basename(file_path)
