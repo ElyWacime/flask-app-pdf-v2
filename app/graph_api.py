@@ -77,3 +77,38 @@ def get_folder_id(access_token, site_id, drive_id, folder_path):
     except Exception as e:
         print(f"Error getting folder ID: {e}")
     raise Exception(f"Folder '{folder_path}' not found")
+
+
+###################################################
+##### YOU SHOULD TAKE A LOOK AT THIS FUNCTION #####
+###################################################
+
+
+import requests
+import os
+
+def upload_file_to_sharepoint(access_token, site_id, drive_id, folder_path, file_path):
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/octet-stream'
+    }
+    
+    file_name = os.path.basename(file_path)
+    upload_url = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drives/{drive_id}/root:/{folder_path}/{file_name}:/content"
+    
+    with open(file_path, 'rb') as file:
+        response = requests.put(upload_url, headers=headers, data=file)
+    
+    response.raise_for_status()
+    print(f"File uploaded successfully: {response.json()}")
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    access_token = get_access_token()
+    site_id = get_site_id(access_token, os.getenv('SHAREPOINT_SITE_NAME'))
+    drive_id = get_drive_id(access_token, site_id)
+    folder_path = "Documents partages/09-Projets/AAA_FOR_TEST_TO_DELETE_LATER"  # Adjust the folder path as needed
+    file_path = "/path/to/your/file.txt"  # Adjust the file path as needed
+    
+    upload_file_to_sharepoint(access_token, site_id, drive_id, folder_path, file_path)
