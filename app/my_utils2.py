@@ -61,7 +61,7 @@ def create_pdf_from_data(data):
     return pdf_file_path
 
 def upload_to_sharepoint(file_path):
-    folder_name = '09-Projets/AAA_FOR_TEST_TO_DELETE_LATER'
+    folder_path = 'Documents partages/FOR_TEST_TO_DELETE_LATER'
     sharepoint = SharePoint()
     
     # Read the content of the file to upload
@@ -72,7 +72,7 @@ def upload_to_sharepoint(file_path):
     file_name = os.path.basename(file_path)
     
     # Upload the file to SharePoint
-    response = sharepoint.upload_file(file_name, folder_name, content)
+    response = sharepoint.upload_file(file_name, folder_path, content)
     print(f"File uploaded to SharePoint: {file_path}")
     return response
 
